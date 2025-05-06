@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Vehículo - STRAV</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="imagenes/logo.png">
+    <link rel="icon" type="image/x-icon" href="imagenes/logo.png">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Estilos personalizados -->
+    <style>
+        .header-custom {
+            background-color: #4a4a4a;
+            color: #fff;
+            padding: 10px 20px;
+            position: relative;
+        }
+        .logo img {
+            max-height: 80px;
+        }
+        .service-text {
+            font-size: 16px;
+            margin-left: 20px;
+            color: #fff;
+        }
+        .header-title {
+            font-size: 30px;
+            font-weight: bold;
+        }
+        .logout-button {
+            background-color: #333;
+            color: white;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .logout-button:hover {
+            background-color: #1a100f;
+            transform: scale(1.05);
+        }
+        .form-container {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        .btn-register {
+            background-color: #4a4a4a;
+            color: #fff;
+            transition: background-color 0.3s;
+        }
+        .btn-register:hover {
+            background-color: #666;
+        }
+        .footer {
+            background-color: #4a4a4a;
+            color: white;
+            padding: 10px 0;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <header class="header-custom">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-auto">
+                    <div class="logo">
+                        <img src="imagenes/logo.png" alt="Logo de STRAV">
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="service-text">
+                        Servicio de recordatorios y alertas tempranas de tu vehículo
+                    </div>
+                </div>
+                <div class="col-md-auto">
+                    <div class="header-title text-md-end">
+                        Agregar Vehículo
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container my-4">
+        <div class="row justify-content-end mb-3">
+            <div class="col-auto">
+                <a class="btn logout-button" href="../BackEnd/cerrarsesion.php">Cerrar Sesión</a>
+            </div>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="alert alert-success" role="alert" id="successMessage" style="display: none;">
+                    Vehículo agregado exitosamente
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="form-container bg-white p-4 mb-4">
+                    <h2 class="text-center mb-4">Agregar Vehículo</h2>
+                    <form action="../BackEnd/insertarvehiculo.php" method="POST" enctype="multipart/form-data" id="vehiculoForm">
+                        <div class="mb-3">
+                            <label for="fechaCompraVeh" class="form-label">Fecha de Compra:</label>
+                            <input type="date" class="form-control" name="fechaCompraVeh" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="placaVeh" class="form-label">Placa:</label>
+                            <input type="text" class="form-control" name="placaVeh" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tipoVeh" class="form-label">Tipo de Vehículo:</label>
+                            <input type="text" class="form-control" name="tipoVeh" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="marcaVeh" class="form-label">Marca:</label>
+                            <input type="text" class="form-control" name="marcaVeh" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="imagen" class="form-label">Imagen:</label>
+                            <input type="file" class="form-control" name="imagen" accept="image/*" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="anioVeh" class="form-label">Año:</label>
+                            <input type="number" class="form-control" name="anioVeh" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="fechaVenSOAT" class="form-label">Fecha de compra del Soat:</label>
+                            <input type="date" class="form-control" name="fechaVenSOAT" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="fechaVenLic" class="form-label">Fecha de expedición de la Licencia de Conducción:</label>
+                            <input type="date" class="form-control" name="fechaVenLic" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="fechaVenTecno" class="form-label">Fecha de compra de la Tecnomecánica:</label>
+                            <input type="date" class="form-control" name="fechaVenTecno" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-register w-100">Registrar Vehículo</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <a class="btn logout-button" href="../FrontEnd/paginaprincipal.html">Regresar</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer mt-auto">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 STRAV. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle con Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('vehiculoForm');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); // Prevenir el envío normal del formulario
+                
+                // Crear un objeto FormData con los datos del formulario
+                const formData = new FormData(form);
+                
+                // Enviar los datos mediante fetch API
+                fetch('../BackEnd/insertarvehiculo.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Mostrar mensaje de éxito
+                        document.getElementById('successMessage').style.display = 'block';
+                        
+                        // Opcional: Limpiar el formulario
+                        form.reset();
+                        
+                        // Hacer scroll hacia el mensaje
+                        document.getElementById('successMessage').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    } else {
+                        console.error('Error al insertar el vehículo');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
