@@ -1,0 +1,180 @@
+<?php
+// Primero procesamos el formulario si se ha enviado
+$mensaje = ""; // Variable para almacenar el mensaje de respuesta
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    require_once "conexion.php";  
+    if (!isset($conn)) {
+        $mensaje = "Error: La conexión no está definida.";
+    } else {
+        $nombre = $_POST["nombreUsuario"];
+        $correo = $_POST["correoUsuario"];
+        $password = password_hash($_POST["contraseniaUsuario"], PASSWORD_DEFAULT);
+        
+        $sql = "INSERT INTO usuario (nombreUsuario, correoUsuario, contraseniaUsuario) 
+                VALUES (:nombreUsuario, :correoUsuario, :contraseniaUsuario)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(":nombreUsuario", $nombre); 
+        $stmt->bindParam(":correoUsuario", $correo);
+        $stmt->bindParam(":contraseniaUsuario", $password);
+        
+        try {
+            if ($stmt->execute()) {
+                $mensaje = "Registro exitoso✅ " ;    
+                } else {
+                $mensaje = "⚠️Error al registrar usuario.";
+            }
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000) {
+                $mensaje = "⚠️El correo y el usuario ya están en uso. Por favor, crea otro.";
+            } else {
+                $mensaje = "Error: " . $e->getMessage();
+            }
+        }
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrarse - STRAV</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="imagenes/logo.png">
+    <link rel="icon" type="image/x-icon" href="imagenes/logo.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4a4a4a;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            position: relative;
+        }
+        .logo img {
+            max-height: 80px;
+        }
+        .service-text {
+            font-size: 16px;
+            margin-left: 20px;
+            color: #fff;
+        }
+        .header-title {
+            position: absolute;
+            right: 20px;
+            top: 40px;
+            font-size: 30px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        h2 {
+            color: #4a4a4a;
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4a4a4a;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #666;
+        }
+        p {
+            margin-top: 15px;
+            text-align: center;
+        }
+        p a {
+            color: #4a4a4a;
+            text-decoration: none;
+        }
+        p a:hover {
+            text-decoration: underline;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+        }
+        .mensaje {
+            background-color: #f8f9fa;
+            border-left: 4px solid #4a4a4a;
+            padding: 10px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .mensaje.exito {
+            border-left-color: #28a745;
+            background-color: #d4edda;
+        }
+        .mensaje.error {
+            border-left-color: #dc3545;
+            background-color: #f8d7da;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="/imagenes/logo.png" alt="Logo de la Empresa">
+        </div>
+        <div class="service-text">
+            Servicio de recordatorios y alertas tempranas de tu vehículo
+        </div>
+        <div class="header-title">
+            Registrarse en STRAV
+        </div>
+    </header>
+    <div class="container">
+        <h2>Registro</h2>
+        
+        <?php if (!empty($mensaje)): ?>
+            <div class="mensaje <?php echo strpos($mensaje, 'exitoso') !== false ? 'exito' : 'error'; ?>">
+                <?php echo $mensaje; ?>
+            </div>
+        <?php endif; ?>
+        
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
+            <input type="text" id="nombreUsuario" name="nombreUsuario" placeholder="Nombre de usuario" required>
+            <input type="email" id="correoUsuario" name="correoUsuario" placeholder="Correo Electrónico" required>
+            <input type="password" id="contraseniaUsuario" name="contraseniaUsuario" placeholder="Contraseña" required>
+            <button type="submit">Registrarse</button>
+        </form>
+        <p>¿Ya tienes una cuenta? <a href="https://violet-wolf-820033.hostingersite.com/iniciodesesion.php">Inicia sesión aquí</a></p>
+    </div>
+    <footer>
+        <p>&copy; 2024 STRAV. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>
