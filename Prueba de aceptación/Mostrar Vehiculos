@@ -1,0 +1,280 @@
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+session_start();
+
+// Conexión a la base de datos
+include 'conexion.php';
+
+// Verificar que el usuario haya iniciado sesión
+if (!isset($_SESSION['idUsuario'])) {
+    die("❌ Error: No has iniciado sesión.");
+}
+
+// Obtener los vehículos del usuario
+$idUsuario = $_SESSION['idUsuario'];
+$sql = "SELECT * FROM vehiculo WHERE idUsuario = :idUsuario";
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(':idUsuario', $idUsuario);
+$stmt->execute();
+$vehiculos = $stmt->fetchAll();
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Vehículos - STRAV</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="uploads/logo.png">
+    <link rel="icon" type="image/x-icon" href="uploads/logo.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4a4a4a;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            position: relative;
+        }
+        .logo img {
+            max-height: 80px;
+        }
+        .service-text {
+            font-size: 16px;
+            margin-left: 20px;
+            color: #fff;
+        }
+        .header-title {
+            position: absolute;
+            right: 20px;
+            top: 40px;
+            font-size: 30px;
+        }
+        .logout-container {
+            position: absolute;
+            top: 120px;
+            right: 20px;
+        }
+        .logout-button {
+            background-color: #333;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
+            display: inline-block;
+        }
+        .logout-button:hover {
+            background-color: #1a100f;
+            transform: scale(1.05);
+        }
+        h1 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #333;
+            padding-top: 20px;
+        }
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background-color:  	#fdf6ec;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: rgb(216, 146, 66);
+            color: white;
+        }
+        td img {
+            width: 100%;
+            height: auto;
+            max-width: 150px;
+            max-height: 150px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .acciones {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* Estilo para el botón de Actualizar */
+        .boton-actualizar {
+            background-color: #4CAF50; /* Verde */
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .boton-actualizar:hover {
+            background-color: #45a049;
+        }
+
+        /* Estilo para el botón de Eliminar */
+        .boton-eliminar {
+            background-color: #D32F2F; /* Rojo */
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .boton-eliminar:hover {
+            background-color: #B71C1C;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            flex: 1;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            width: 100%;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img src="uploads/logo.png" alt="Logo de STRAV">
+    </div>
+    <div class="service-text">
+        Servicio de recordatorios y alertas tempranas de tu vehículo
+    </div>
+    <div class="header-title">
+        Consultar Vehículos
+    </div>
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        table {
+            flex-grow: 2; /* Hace que la tabla ocupe todo el espacio disponible */
+        }
+
+        footer {
+            background-color: #4a4a4a;
+            text-align: center;
+            padding: 10px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            margin-top: 30px;
+        }
+        .button-container {
+            display: inline-block;
+            justify-content: space-between;
+            margin-top: 20px;
+            width: auto;
+        }
+        .button-container button, .button-container a {
+            background-color: #4a4a4a;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+            flex: 1;
+            margin: 0 5px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .button-container button:hover, .button-container a:hover {
+            background-color: #666;
+            transform: scale(1.05);
+        }
+    </style>
+</header>
+
+<div class="logout-container">
+    <a class="logout-button" href="cerrarsesion.php">Cerrar Sesión</a>
+</div>
+
+<h1>Mis Vehículos</h1>
+
+<table>
+    <tr>
+        <th>Placa</th>
+        <th>Marca</th>
+        <th>Tipo</th>
+        <th>Año</th>
+        <th>Imagen</th>
+        <th>Acciones</th>
+    </tr>
+
+    <?php foreach ($vehiculos as $vehiculo): ?>
+        <tr>
+            <td><?= htmlspecialchars($vehiculo['placaVeh']); ?></td>
+            <td><?= htmlspecialchars($vehiculo['marcaVeh']); ?></td>
+            <td><?= htmlspecialchars($vehiculo['tipoVeh']); ?></td>
+            <td><?= htmlspecialchars($vehiculo['anioVeh']); ?></td>
+            <td>
+                <img src="uploads/<?= htmlspecialchars($vehiculo['imagen']); ?>" alt="Imagen del vehículosk">
+            </td>
+            <td>
+                <div class="acciones">
+                    <a href="actualizarvehiculo.php?idVeh=<?= $vehiculo['idVeh']; ?>" class="boton-actualizar">Actualizar</a>
+                    <a href="eliminarvehiculo.php?idVeh=<?= $vehiculo['idVeh']; ?>" class="boton-eliminar" onclick="return confirm('¿Estás seguro de eliminar este vehículo?')">Eliminar</a>
+                </div>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+</table>
+
+<div class="button-container" style="margin-left: 20px;">
+        <a href="../FrontEnd/paginaprincipal.html">Regresar</a>
+</div>
+
+<footer>
+    <p>&copy; 2024 STRAV. Todos los derechos reservados.</p>
+</footer>
+
+</body>
+</html>
